@@ -7,3 +7,7 @@
 /captures
 .externalNativeBuild
 .cxx
+app/play/release/app-play-release.apk
+app/play/release/baselineProfiles/0/app-play-release.dm
+app/play/release/baselineProfiles/1/app-play-release.dm
+app/play/release/output-metadata.json
