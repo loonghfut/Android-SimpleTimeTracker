@@ -467,6 +467,8 @@ Example:<br/>
 \"Reading\",2023-05-30 14:45:21,2023-05-30 15:45:21,\"Comment, comment\"
     ]]></string>
     <string name="settings_export_ics">ICS export</string>
+    <string name="settings_export_ics_s3_settings">S3 settings</string>
+    <string name="settings_export_ics_s3_settings_description">Configure S3 endpoint, keys, and upload options.</string>
     <string name="settings_export_ics_s3_endpoint">S3 endpoint</string>
     <string name="settings_export_ics_s3_endpoint_description">Base S3 endpoint URL.</string>
     <string name="settings_export_ics_s3_endpoint_hint">https://s3.example.com</string>
@@ -497,6 +499,8 @@ Example:<br/>
     <string name="settings_export_ics_s3_object_key_default">Default: stt_events_{date}.ics</string>
     <string name="settings_export_ics_s3_upload">Upload ICS to S3</string>
     <string name="settings_export_ics_s3_upload_description">Upload using configured S3 settings.</string>
+    <string name="settings_export_ics_s3_pull_to_refresh">Enable pull-to-refresh upload</string>
+    <string name="settings_export_ics_s3_pull_to_refresh_description">Allow uploading ICS to S3 by pulling down on the main screen.</string>
     <string name="settings_automatic_ics_s3_upload">Enable automatic S3 upload</string>
     <string name="settings_automatic_ics_s3_upload_description">ICS file will be uploaded daily at the selected time.</string>
     <string name="settings_export_ics_s3_value_empty">Not set</string>

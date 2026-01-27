@@ -375,6 +375,11 @@
         android:label="ExportOptionsDialogFragment"
         tools:layout="@layout/settings_export_options_fragment" />
     <dialog
+        android:id="@+id/exportIcsS3OptionsDialogFragment"
+        android:name="com.example.util.simpletimetracker.feature_settings.exportIcsS3Options.view.ExportIcsS3OptionsFragment"
+        android:label="ExportIcsS3OptionsDialogFragment"
+        tools:layout="@layout/settings_export_ics_s3_options_fragment" />
+    <dialog
         android:id="@+id/partialRestoreDialogFragment"
         android:name="com.example.util.simpletimetracker.feature_settings.partialRestore.view.PartialRestoreFragment"
         android:label="PartialRestoreDialogFragment"

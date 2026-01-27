@@ -21,6 +21,7 @@ import com.example.util.simpletimetracker.feature_settings.viewModel.SettingsVie
 import com.example.util.simpletimetracker.navigation.Router
 import com.example.util.simpletimetracker.navigation.params.screen.BackupOptionsParams
 import com.example.util.simpletimetracker.navigation.params.screen.DataExportSettingsResult
+import com.example.util.simpletimetracker.navigation.params.screen.ExportIcsS3OptionsParams
 import com.example.util.simpletimetracker.navigation.params.screen.OptionsListParams
 import com.example.util.simpletimetracker.navigation.params.screen.TextInputDialogParams
 import kotlinx.coroutines.delay
@@ -88,6 +89,7 @@ class SettingsBackupViewModelDelegate @Inject constructor(
                 delay(200)
                 settingsFileWorkDelegate.onExportIcsClick(ICS_EXPORT_DIALOG_TAG)
             }
+            SettingsBlock.ExportIcsS3Settings -> onS3SettingsClick()
             SettingsBlock.ExportIcsS3Endpoint -> onS3EndpointClick()
             SettingsBlock.ExportIcsS3AccessKey -> onS3AccessKeyClick()
             SettingsBlock.ExportIcsS3SecretKey -> onS3SecretKeyClick()
@@ -98,6 +100,7 @@ class SettingsBackupViewModelDelegate @Inject constructor(
             SettingsBlock.ExportIcsS3TlsVerify -> onS3TlsVerifyClick()
             SettingsBlock.ExportIcsS3ObjectKey -> onS3ObjectKeyClick()
             SettingsBlock.ExportIcsS3Upload -> onExportIcsS3Click()
+            SettingsBlock.ExportIcsS3PullToRefresh -> onS3PullToRefreshClick()
             SettingsBlock.ExportIcsS3Automatic -> settingsFileWorkDelegate.onAutomaticIcsS3UploadClick()
             SettingsBlock.ExportIcsS3AutomaticTime -> onAutoIcsS3UploadTriggerTimeClicked()
             else -> {
@@ -228,6 +231,12 @@ class SettingsBackupViewModelDelegate @Inject constructor(
         settingsFileWorkDelegate.onIcsExportToS3()
     }
 
+    private fun onS3SettingsClick() = delegateScope.launch {
+        settingsAdvancedOptionsUpdateInteractor.sendDismiss()
+        delay(200)
+        router.navigate(ExportIcsS3OptionsParams)
+    }
+
     private fun onS3EndpointClick() = delegateScope.launch {
         openTextInputDialog(
             tag = ICS_EXPORT_S3_ENDPOINT_DIALOG_TAG,
@@ -332,6 +341,12 @@ class SettingsBackupViewModelDelegate @Inject constructor(
             inputType = InputType.TYPE_CLASS_TEXT or
                 InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
         )
+    }
+
+    private fun onS3PullToRefreshClick() = delegateScope.launch {
+        val newValue = !prefsInteractor.getIcsExportS3PullToRefreshEnabled()
+        prefsInteractor.setIcsExportS3PullToRefreshEnabled(newValue)
+        parent?.updateContent()
     }
 
     private fun openTextInputDialog(

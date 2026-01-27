@@ -141,6 +141,25 @@ class SettingsExportViewDataInteractor @Inject constructor(
             subtitle = resourceRepo.getString(R.string.settings_export_warning),
             subtitleColor = SettingsTextColor.Attention,
         )
+        result += SettingsTextViewData(
+            block = SettingsBlock.ExportIcsS3Settings,
+            title = resourceRepo.getString(R.string.settings_export_ics_s3_settings),
+            subtitle = resourceRepo.getString(R.string.settings_export_ics_s3_settings_description),
+        )
+
+        if (loadAutomaticExportEnabled()) {
+            result += SettingsTextViewData(
+                block = SettingsBlock.ExportTriggerAutoBackup,
+                title = resourceRepo.getString(R.string.backup_options_trigger_auto_export),
+                subtitle = "",
+            )
+        }
+
+        return result
+    }
+
+    suspend fun executeIcsS3Options(): List<ViewHolderType> {
+        val result = mutableListOf<ViewHolderType>()
 
         result += SettingsTextViewData(
             block = SettingsBlock.ExportIcsS3Endpoint,
@@ -203,6 +222,14 @@ class SettingsExportViewDataInteractor @Inject constructor(
             title = resourceRepo.getString(R.string.settings_export_ics_s3_upload),
             subtitle = resourceRepo.getString(R.string.settings_export_ics_s3_upload_description),
         )
+        result += SettingsCheckboxViewData(
+            block = SettingsBlock.ExportIcsS3PullToRefresh,
+            title = resourceRepo.getString(R.string.settings_export_ics_s3_pull_to_refresh),
+            subtitle = resourceRepo.getString(R.string.settings_export_ics_s3_pull_to_refresh_description),
+            isChecked = prefsInteractor.getIcsExportS3PullToRefreshEnabled(),
+            bottomSpaceIsVisible = true,
+            dividerIsVisible = true,
+        )
 
         val automaticUploadEnabled = loadAutomaticIcsS3UploadEnabled()
         val automaticUploadLastSaveTime = loadAutomaticIcsS3UploadLastSaveTime()
@@ -234,14 +261,6 @@ class SettingsExportViewDataInteractor @Inject constructor(
                 selectedValue = loadAutomaticIcsS3UploadTriggerTime(),
                 bottomSpaceIsVisible = true,
                 dividerIsVisible = true,
-            )
-        }
-
-        if (loadAutomaticExportEnabled()) {
-            result += SettingsTextViewData(
-                block = SettingsBlock.ExportTriggerAutoBackup,
-                title = resourceRepo.getString(R.string.backup_options_trigger_auto_export),
-                subtitle = "",
             )
         }
 

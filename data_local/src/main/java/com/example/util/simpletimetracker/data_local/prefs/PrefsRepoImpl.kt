@@ -193,6 +193,10 @@ class PrefsRepoImpl @Inject constructor(
         KEY_ICS_EXPORT_S3_AUTOMATIC_TRIGGER_TIME, 0,
     )
 
+    override var icsExportS3PullToRefreshEnabled: Boolean by prefs.delegate(
+        KEY_ICS_EXPORT_S3_PULL_TO_REFRESH_ENABLED, false,
+    )
+
     override var keepStatisticsRange: Boolean by prefs.delegate(
         KEY_KEEP_STATISTICS_RANGE, false,
     )
@@ -733,6 +737,7 @@ class PrefsRepoImpl @Inject constructor(
         const val KEY_ICS_EXPORT_S3_AUTOMATIC_ERROR = "icsExportS3AutomaticError"
         const val KEY_ICS_EXPORT_S3_AUTOMATIC_LAST_SAVE_TIME = "icsExportS3AutomaticLastSaveTime"
         const val KEY_ICS_EXPORT_S3_AUTOMATIC_TRIGGER_TIME = "icsExportS3AutomaticTriggerTime"
+        const val KEY_ICS_EXPORT_S3_PULL_TO_REFRESH_ENABLED = "icsExportS3PullToRefreshEnabled"
         const val KEY_KEEP_STATISTICS_RANGE = "keepStatisticsRange"
         const val KEY_RETROACTIVE_TRACKING_MODE = "retroactiveTrackingMode"
         const val KEY_RETROACTIVE_MULTITASKING_HINT_WAS_HIDDEN = "retroactiveMultitaskingHintWasHidden"

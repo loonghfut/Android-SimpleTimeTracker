@@ -2,6 +2,7 @@ package com.example.util.simpletimetracker.feature_main.view
 
 import android.graphics.ColorFilter
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AttrRes
@@ -17,6 +18,7 @@ import com.example.util.simpletimetracker.core.base.BaseFragment
 import com.example.util.simpletimetracker.core.di.BaseViewModelFactory
 import com.example.util.simpletimetracker.core.extension.addOnBackPressedListener
 import com.example.util.simpletimetracker.core.extension.addOnPageChangeCallback
+import com.example.util.simpletimetracker.core.extension.allowDiskRead
 import com.example.util.simpletimetracker.core.extension.changeDragSensitivity
 import com.example.util.simpletimetracker.core.extension.findRecycler
 import com.example.util.simpletimetracker.core.sharedViewModel.MainTabsViewModel
@@ -35,6 +37,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.example.util.simpletimetracker.navigation.Router
+import com.example.util.simpletimetracker.navigation.params.notification.SnackBarParams
 import com.example.util.simpletimetracker.feature_main.databinding.MainFragmentBinding as Binding
 
 @AndroidEntryPoint
@@ -55,6 +59,9 @@ class MainFragment : BaseFragment<Binding>() {
     @Inject
     lateinit var widgetInteractor: WidgetInteractor
 
+    @Inject
+    lateinit var router: Router
+
     private val viewModel: MainViewModel by viewModels()
     private val mainTabsViewModel: MainTabsViewModel by activityViewModels(
         factoryProducer = { mainTabsViewModelFactory },
@@ -70,8 +77,9 @@ class MainFragment : BaseFragment<Binding>() {
 
     override fun initUi() {
         setupPager()
+        setupSwipeRefresh()
         checkForShortcutNavigation()
-        widgetInteractor.initializeCachedViews()
+        allowDiskRead { widgetInteractor.initializeCachedViews() }
     }
 
     override fun initUx() {
@@ -81,57 +89,79 @@ class MainFragment : BaseFragment<Binding>() {
     override fun initViewModel() {
         viewModel.initialize
         mainTabsViewModel.isNavBatAtTheBottom.observe(::updateNavBarPosition)
+        viewModel.isRefreshing.observe { binding.mainSwipeRefresh.isRefreshing = it }
+        viewModel.pullToRefreshEnabled.observe {
+            binding.mainSwipeRefresh.isEnabled = it
+            if (!it) binding.mainSwipeRefresh.isRefreshing = false
+        }
+        viewModel.message.observe(::showMessage)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshPullToRefreshEnabled()
+    }
+
+    private fun setupSwipeRefresh() = with(binding) {
+        mainSwipeRefresh.setOnRefreshListener {
+            viewModel.onPullToUpload()
+        }
+        mainSwipeRefresh.setOnChildScrollUpCallback { _, _ ->
+            canCurrentPageScrollUp()
+        }
     }
 
     private fun setupPager() = with(binding) {
-        mainPager.adapter = SafeFragmentStateAdapter(
-            MainContentAdapter(
-                fragment = this@MainFragment,
-                tabs = mainTabsProvider.tabsList,
-            ),
-        )
-        mainPager.offscreenPageLimit = 3 // Same as number of pages to avoid recreating.
-        mainPager.addOnPageChangeCallback(lifecycleOwner = this@MainFragment) { state ->
-            mainTabsViewModel.onScrollStateChanged(
-                isScrolling = state != ViewPager2.SCROLL_STATE_IDLE,
+        allowDiskRead {
+            mainPager.adapter = SafeFragmentStateAdapter(
+                MainContentAdapter(
+                    fragment = this@MainFragment,
+                    tabs = mainTabsProvider.tabsList,
+                ),
             )
-        }
-
-        TabLayoutMediator(mainTabs, mainPager) { tab, position ->
-            position.let(mainTabsProvider::mapPositionToIcon)
-                .let(tab::setIcon)
-            position.let(mainTabsProvider::mapPositionToDescription)
-                ?.let { tab.contentDescription = it }
-            tab.icon?.colorFilter = if (position == mainPagePosition) {
-                selectedColorFilter
-            } else {
-                unselectedColorFilter
+            mainPager.offscreenPageLimit = 3 // Same as number of pages to avoid recreating.
+            mainPager.addOnPageChangeCallback(lifecycleOwner = this@MainFragment) { state ->
+                mainTabsViewModel.onScrollStateChanged(
+                    isScrolling = state != ViewPager2.SCROLL_STATE_IDLE,
+                )
             }
-        }.attach()
 
-        mainTabs.addOnTabSelectedListener(
-            object : TabLayout.OnTabSelectedListener {
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    tab?.position
-                        ?.let(mainTabsProvider::mapPositionToTab)
-                        ?.let(mainTabsViewModel::onTabReselected)
+            TabLayoutMediator(mainTabs, mainPager) { tab, position ->
+                position.let(mainTabsProvider::mapPositionToIcon)
+                    .let(tab::setIcon)
+                position.let(mainTabsProvider::mapPositionToDescription)
+                    ?.let { tab.contentDescription = it }
+                tab.icon?.colorFilter = if (position == mainPagePosition) {
+                    selectedColorFilter
+                } else {
+                    unselectedColorFilter
                 }
+            }.attach()
 
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    tab?.icon?.colorFilter = unselectedColorFilter
-                    tab?.position
-                        ?.let(mainTabsProvider::mapPositionToTab)
-                        ?.let(mainTabsViewModel::onTabUnselected)
-                }
+            mainTabs.addOnTabSelectedListener(
+                object : TabLayout.OnTabSelectedListener {
+                    override fun onTabReselected(tab: TabLayout.Tab?) {
+                        tab?.position
+                            ?.let(mainTabsProvider::mapPositionToTab)
+                            ?.let(mainTabsViewModel::onTabReselected)
+                    }
 
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    tab?.icon?.colorFilter = selectedColorFilter
-                    backPressedCallback?.isEnabled = tab?.position.orZero() != mainPagePosition
-                }
-            },
-        )
-        mainPager.setCurrentItem(mainPagePosition, false)
-        mainPager.findRecycler()?.changeDragSensitivity(2f)
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+                        tab?.icon?.colorFilter = unselectedColorFilter
+                        tab?.position
+                            ?.let(mainTabsProvider::mapPositionToTab)
+                            ?.let(mainTabsViewModel::onTabUnselected)
+                    }
+
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        tab?.icon?.colorFilter = selectedColorFilter
+                        backPressedCallback?.isEnabled = tab?.position.orZero() != mainPagePosition
+                    }
+                },
+            )
+            mainPager.setCurrentItem(mainPagePosition, false)
+            mainPager.findRecycler()?.changeDragSensitivity(2f)
+        }
     }
 
     private fun updateNavBarPosition(isAtTheBottom: Boolean) = with(binding) {
@@ -140,13 +170,13 @@ class MainFragment : BaseFragment<Binding>() {
         if (isAtTheBottom) {
             set.clear(R.id.mainTabs, ConstraintSet.TOP)
             set.connect(R.id.mainTabs, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.connect(R.id.mainPager, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            set.connect(R.id.mainPager, ConstraintSet.BOTTOM, R.id.mainTabs, ConstraintSet.TOP)
+            set.connect(R.id.mainSwipeRefresh, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            set.connect(R.id.mainSwipeRefresh, ConstraintSet.BOTTOM, R.id.mainTabs, ConstraintSet.TOP)
         } else {
             set.clear(R.id.mainTabs, ConstraintSet.BOTTOM)
             set.connect(R.id.mainTabs, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-            set.connect(R.id.mainPager, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.connect(R.id.mainPager, ConstraintSet.TOP, R.id.mainTabs, ConstraintSet.BOTTOM)
+            set.connect(R.id.mainSwipeRefresh, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.connect(R.id.mainSwipeRefresh, ConstraintSet.TOP, R.id.mainTabs, ConstraintSet.BOTTOM)
         }
         set.applyTo(binding.containerMain)
 
@@ -194,5 +224,27 @@ class MainFragment : BaseFragment<Binding>() {
             InsetConfiguration.DoNotApply
         }
         initInsets()
+    }
+
+    private fun canCurrentPageScrollUp(): Boolean {
+        val position = binding.mainPager.currentItem
+        val fragment = childFragmentManager.findFragmentByTag("f$position")
+        val root = fragment?.view ?: return false
+        return root.canScrollUp()
+    }
+
+    private fun View.canScrollUp(): Boolean {
+        if (canScrollVertically(-1)) return true
+        if (this !is ViewGroup) return false
+        for (index in 0 until childCount) {
+            if (getChildAt(index).canScrollUp()) return true
+        }
+        return false
+    }
+
+    private fun showMessage(message: SnackBarParams?) {
+        if (message == null) return
+        router.show(message)
+        viewModel.onMessageShown()
     }
 }

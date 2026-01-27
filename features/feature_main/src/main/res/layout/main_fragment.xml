@@ -23,13 +23,22 @@
         app:layout_constraintTop_toTopOf="@id/mainTabs"
         tools:visibility="visible" />
 
-    <!--  Small margin is added to prevent shared transition going under new screen  -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/mainPager"
-        android:layout_width="match_parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/mainSwipeRefresh"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="0.1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mainTabs" />
+        app:layout_constraintTop_toBottomOf="@id/mainTabs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!--  Small margin is added to prevent shared transition going under new screen  -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/mainPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0.1dp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

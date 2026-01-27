@@ -362,6 +362,13 @@ class PrefsInteractor @Inject constructor(
         prefsRepo.icsExportS3AutomaticTriggerTime = value
     }
 
+    suspend fun getIcsExportS3PullToRefreshEnabled(): Boolean = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3PullToRefreshEnabled
+    }
+
+    suspend fun setIcsExportS3PullToRefreshEnabled(value: Boolean) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3PullToRefreshEnabled = value
+    }
 
     suspend fun getKeepStatisticsRange(): Boolean = withContext(Dispatchers.IO) {
         prefsRepo.keepStatisticsRange

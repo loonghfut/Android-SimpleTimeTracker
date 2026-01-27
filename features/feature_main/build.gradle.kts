@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":feature_statistics"))
     implementation(project(":feature_settings"))
     implementation(project(":feature_goals"))
+    implementation(libs.androidx.swipeRefreshLayout)
     implementation(libs.google.dagger)
     ksp(libs.kapt.dagger)
 }

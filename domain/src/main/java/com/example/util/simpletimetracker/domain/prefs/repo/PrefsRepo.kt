@@ -56,6 +56,7 @@ interface PrefsRepo {
     var icsExportS3AutomaticError: Boolean
     var icsExportS3AutomaticLastSaveTime: Long
     var icsExportS3AutomaticTriggerTime: Long
+    var icsExportS3PullToRefreshEnabled: Boolean
 
     var keepStatisticsRange: Boolean
 
