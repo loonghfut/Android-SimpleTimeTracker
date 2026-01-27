@@ -41,6 +41,7 @@ import com.example.util.simpletimetracker.feature_notification.activitySwitch.ma
 import com.example.util.simpletimetracker.feature_notification.activitySwitch.manager.NotificationControlsManager.Companion.ACTION_NOTIFICATION_CONTROLS_TYPE_CLICK
 import com.example.util.simpletimetracker.feature_notification.activitySwitch.manager.NotificationControlsManager.Companion.ARGS_CONTROLS_FROM
 import com.example.util.simpletimetracker.feature_notification.automaticBackup.controller.AutomaticBackupBroadcastController
+import com.example.util.simpletimetracker.feature_notification.automaticIcsS3Export.controller.AutomaticIcsS3ExportBroadcastController
 import com.example.util.simpletimetracker.feature_notification.automaticExport.controller.AutomaticExportBroadcastController
 import com.example.util.simpletimetracker.feature_notification.goalTime.controller.NotificationGoalTimeBroadcastController
 import com.example.util.simpletimetracker.feature_notification.inactivity.controller.NotificationInactivityBroadcastController
@@ -78,6 +79,9 @@ class NotificationReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var automaticExportController: AutomaticExportBroadcastController
+
+    @Inject
+    lateinit var automaticIcsS3ExportController: AutomaticIcsS3ExportBroadcastController
 
     @Inject
     lateinit var pomodoroController: NotificationPomodoroBroadcastController
@@ -159,6 +163,10 @@ class NotificationReceiver : BroadcastReceiver() {
             -> goAsync(
                 finally = { automaticExportController.onFinished() },
                 block = { automaticExportController.onReminder() },
+            )
+            ACTION_AUTOMATIC_ICS_S3_EXPORT -> goAsync(
+                finally = { automaticIcsS3ExportController.onFinished() },
+                block = { automaticIcsS3ExportController.onReminder() },
             )
             ACTION_EXTERNAL_START_ACTIVITY -> {
                 val name = intent.getStringExtra(EXTRA_ACTIVITY_NAME)
@@ -333,6 +341,7 @@ class NotificationReceiver : BroadcastReceiver() {
         typeController.onBootCompleted()
         automaticBackupController.onBootCompleted()
         automaticExportController.onBootCompleted()
+        automaticIcsS3ExportController.onBootCompleted()
         pomodoroController.onBootCompleted()
     }
 
@@ -381,6 +390,8 @@ class NotificationReceiver : BroadcastReceiver() {
             "com.razeeman.util.simpletimetracker.ACTION_AUTOMATIC_BACKUP"
         const val ACTION_AUTOMATIC_EXPORT =
             "com.razeeman.util.simpletimetracker.ACTION_AUTOMATIC_EXPORT"
+        const val ACTION_AUTOMATIC_ICS_S3_EXPORT =
+            "com.razeeman.util.simpletimetracker.ACTION_AUTOMATIC_ICS_S3_EXPORT"
 
         const val EXTRA_GOAL_TIME_TYPE_ID =
             "extra_goal_time_type_id"

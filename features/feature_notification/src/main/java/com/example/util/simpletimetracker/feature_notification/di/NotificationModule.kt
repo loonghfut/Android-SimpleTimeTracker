@@ -2,9 +2,11 @@ package com.example.util.simpletimetracker.feature_notification.di
 
 import com.example.util.simpletimetracker.core.repo.AutomaticBackupRepo
 import com.example.util.simpletimetracker.core.repo.AutomaticExportRepo
+import com.example.util.simpletimetracker.core.repo.AutomaticIcsS3ExportRepo
 import com.example.util.simpletimetracker.domain.notifications.interactor.ActivityStartedStoppedBroadcastInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticBackupInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticExportInteractor
+import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticIcsS3ExportInteractor
 import com.example.util.simpletimetracker.domain.notifications.interactor.NotificationGoalTimeInteractor
 import com.example.util.simpletimetracker.domain.notifications.interactor.NotificationInactivityInteractor
 import com.example.util.simpletimetracker.domain.notifications.interactor.NotificationActivityInteractor
@@ -15,6 +17,8 @@ import com.example.util.simpletimetracker.domain.notifications.interactor.Notifi
 import com.example.util.simpletimetracker.domain.pomodoro.interactor.PomodoroCycleNotificationInteractor
 import com.example.util.simpletimetracker.feature_notification.automaticBackup.interactor.AutomaticBackupInteractorImpl
 import com.example.util.simpletimetracker.feature_notification.automaticBackup.repo.AutomaticBackupRepoImpl
+import com.example.util.simpletimetracker.feature_notification.automaticIcsS3Export.interactor.AutomaticIcsS3ExportInteractorImpl
+import com.example.util.simpletimetracker.feature_notification.automaticIcsS3Export.repo.AutomaticIcsS3ExportRepoImpl
 import com.example.util.simpletimetracker.feature_notification.automaticExport.interactor.AutomaticExportInteractorImpl
 import com.example.util.simpletimetracker.feature_notification.automaticExport.repo.AutomaticExportRepoImpl
 import com.example.util.simpletimetracker.feature_notification.goalTime.interactor.NotificationGoalTimeInteractorImpl
@@ -70,10 +74,17 @@ interface NotificationModule {
     fun bindAutomaticExportInteractor(impl: AutomaticExportInteractorImpl): AutomaticExportInteractor
 
     @Binds
+    fun bindAutomaticIcsS3ExportInteractor(impl: AutomaticIcsS3ExportInteractorImpl): AutomaticIcsS3ExportInteractor
+
+    @Binds
     @Singleton
     fun bindAutomaticBackupRepo(impl: AutomaticBackupRepoImpl): AutomaticBackupRepo
 
     @Binds
     @Singleton
     fun bindAutomaticExportRepo(impl: AutomaticExportRepoImpl): AutomaticExportRepo
+
+    @Binds
+    @Singleton
+    fun bindAutomaticIcsS3ExportRepo(impl: AutomaticIcsS3ExportRepoImpl): AutomaticIcsS3ExportRepo
 }

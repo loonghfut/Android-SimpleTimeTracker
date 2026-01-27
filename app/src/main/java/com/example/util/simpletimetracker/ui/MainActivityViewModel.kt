@@ -5,6 +5,7 @@ import com.example.util.simpletimetracker.core.base.BaseViewModel
 import com.example.util.simpletimetracker.core.extension.set
 import com.example.util.simpletimetracker.core.repo.AutomaticBackupRepo
 import com.example.util.simpletimetracker.core.repo.AutomaticExportRepo
+import com.example.util.simpletimetracker.core.repo.AutomaticIcsS3ExportRepo
 import com.example.util.simpletimetracker.core.repo.DataEditRepo
 import com.example.util.simpletimetracker.core.repo.FileWorkRepo
 import com.example.util.simpletimetracker.domain.extension.orFalse
@@ -17,6 +18,7 @@ class MainActivityViewModel @Inject constructor(
     private val dataEditRepo: DataEditRepo,
     private val automaticBackupRepo: AutomaticBackupRepo,
     private val automaticExportRepo: AutomaticExportRepo,
+    private val automaticIcsS3ExportRepo: AutomaticIcsS3ExportRepo,
     private val fileWorkRepo: FileWorkRepo,
     private val settingsFileWorkDelegate: SettingsFileWorkDelegate,
 ) : BaseViewModel() {
@@ -24,6 +26,7 @@ class MainActivityViewModel @Inject constructor(
     val progressVisibility: MediatorLiveData<Boolean> = MediatorLiveData<Boolean>().apply {
         addSource(automaticBackupRepo.inProgress) { updateProgress() }
         addSource(automaticExportRepo.inProgress) { updateProgress() }
+        addSource(automaticIcsS3ExportRepo.inProgress) { updateProgress() }
         addSource(dataEditRepo.inProgress) { updateProgress() }
         addSource(fileWorkRepo.inProgress) { updateProgress() }
     }
@@ -36,6 +39,7 @@ class MainActivityViewModel @Inject constructor(
         val visible = dataEditRepo.inProgress.value.orFalse() ||
             automaticBackupRepo.inProgress.value.orFalse() ||
             automaticExportRepo.inProgress.value.orFalse() ||
+            automaticIcsS3ExportRepo.inProgress.value.orFalse() ||
             fileWorkRepo.inProgress.value.orFalse()
 
         progressVisibility.set(visible)

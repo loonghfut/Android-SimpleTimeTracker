@@ -17,6 +17,7 @@ import com.example.util.simpletimetracker.feature_dialogs.recordQuickActions.vie
 import com.example.util.simpletimetracker.feature_dialogs.recordTagSelection.RecordTagSelectionDialogFragment
 import com.example.util.simpletimetracker.feature_dialogs.recordTagValueSelection.view.RecordTagValueSelectionDialogFragment
 import com.example.util.simpletimetracker.feature_dialogs.standard.StandardDialogFragment
+import com.example.util.simpletimetracker.feature_dialogs.textInput.TextInputDialogFragment
 import com.example.util.simpletimetracker.feature_dialogs.typesSelection.view.TypesSelectionDialogFragment
 import com.example.util.simpletimetracker.feature_records_filter.view.RecordsFilterFragment
 import com.example.util.simpletimetracker.feature_settings.customizeOptionsMenu.CustomizeOptionsMenuDialogFragment
@@ -52,6 +53,7 @@ import com.example.util.simpletimetracker.navigation.params.screen.RecordTagSele
 import com.example.util.simpletimetracker.navigation.params.screen.RecordTagValueSelectionParams
 import com.example.util.simpletimetracker.navigation.params.screen.RecordsFilterParams
 import com.example.util.simpletimetracker.navigation.params.screen.StandardDialogParams
+import com.example.util.simpletimetracker.navigation.params.screen.TextInputDialogParams
 import com.example.util.simpletimetracker.navigation.params.screen.TypesSelectionDialogParams
 import dagger.Module
 import dagger.Provides
@@ -70,6 +72,16 @@ class NavigationDialogMapModule {
         return NavigationData(
             R.id.standardDialogFragment,
             bundleCreatorDelegate(StandardDialogFragment::createBundle),
+        )
+    }
+
+    @IntoMap
+    @Provides
+    @ScreenKey(TextInputDialogParams::class)
+    fun textInputDialog(): NavigationData {
+        return NavigationData(
+            R.id.textInputDialogFragment,
+            bundleCreatorDelegate(TextInputDialogFragment::createBundle),
         )
     }
 

@@ -13,9 +13,11 @@ import com.example.util.simpletimetracker.core.repo.PermissionRepo
 import com.example.util.simpletimetracker.core.repo.ResourceRepo
 import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticBackupInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticExportInteractor
+import com.example.util.simpletimetracker.domain.backup.interactor.AutomaticIcsS3ExportInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.BackupInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.CsvExportInteractor
 import com.example.util.simpletimetracker.domain.backup.interactor.IcsExportInteractor
+import com.example.util.simpletimetracker.domain.backup.model.S3Config
 import com.example.util.simpletimetracker.domain.prefs.interactor.PrefsInteractor
 import com.example.util.simpletimetracker.domain.statistics.interactor.SettingsDataUpdateInteractor
 import com.example.util.simpletimetracker.domain.backup.model.BackupOptionsData
@@ -58,6 +60,7 @@ class SettingsFileWorkDelegate @Inject constructor(
     private val prefsInteractor: PrefsInteractor,
     private val automaticBackupInteractor: AutomaticBackupInteractor,
     private val automaticExportInteractor: AutomaticExportInteractor,
+    private val automaticIcsS3ExportInteractor: AutomaticIcsS3ExportInteractor,
     private val settingsDataUpdateInteractor: SettingsDataUpdateInteractor,
 ) : ViewModelDelegate() {
 
@@ -208,6 +211,18 @@ class SettingsFileWorkDelegate @Inject constructor(
         }
     }
 
+    fun onAutomaticIcsS3UploadClick() = delegateScope.launch {
+        if (loadAutomaticIcsS3UploadEnabled()) {
+            disableAutomaticIcsS3Upload()
+        } else {
+            if (loadS3Config() == null) return@launch
+            prefsInteractor.setIcsExportS3AutomaticEnabled(true)
+            prefsInteractor.setIcsExportS3AutomaticError(false)
+            automaticIcsS3ExportInteractor.schedule()
+            requestScreenUpdate()
+        }
+    }
+
     fun onTriggerAutoExportClick() {
         delegateScope.launch {
             val result = automaticExportInteractor.export()
@@ -263,6 +278,19 @@ class SettingsFileWorkDelegate @Inject constructor(
         ).let(router::navigate)
     }
 
+    fun onIcsExportToS3() = delegateScope.launch {
+        val config = loadS3Config() ?: return@launch
+        val range = mapDataExportSettingsRange(
+            prefsInteractor.getFileExportRange().toParams(),
+        )
+        executeFileWork {
+            icsExportInteractor.uploadIcsFileToS3(
+                config = config,
+                range = range,
+            )
+        }
+    }
+
     private suspend fun mapDataExportSettingsRange(
         data: RangeLengthParams,
     ): Range? {
@@ -282,14 +310,17 @@ class SettingsFileWorkDelegate @Inject constructor(
     private suspend fun checkForAutomaticBackupError() {
         val automaticBackupError = prefsInteractor.getAutomaticBackupError()
         val automaticExportError = prefsInteractor.getAutomaticExportError()
+        val automaticIcsS3Error = prefsInteractor.getIcsExportS3AutomaticError()
 
-        if (automaticBackupError || automaticExportError) {
+        if (automaticBackupError || automaticExportError || automaticIcsS3Error) {
             val backupString = resourceRepo.getString(R.string.message_automatic_backup_error)
                 .takeIf { automaticBackupError }
             val exportString = resourceRepo.getString(R.string.message_automatic_export_error)
                 .takeIf { automaticExportError }
+            val icsS3String = resourceRepo.getString(R.string.message_automatic_ics_s3_export_error)
+                .takeIf { automaticIcsS3Error }
             val hint = resourceRepo.getString(R.string.message_automatic_error_hint)
-            val message = listOfNotNull(backupString, exportString, hint)
+            val message = listOfNotNull(backupString, exportString, icsS3String, hint)
                 .joinToString(separator = " ")
 
             router.show(
@@ -302,6 +333,7 @@ class SettingsFileWorkDelegate @Inject constructor(
 
         if (automaticBackupError) prefsInteractor.setAutomaticBackupError(false)
         if (automaticExportError) prefsInteractor.setAutomaticExportError(false)
+        if (automaticIcsS3Error) prefsInteractor.setIcsExportS3AutomaticError(false)
     }
 
     private fun onSaveBackup(uriString: String?) {
@@ -370,6 +402,15 @@ class SettingsFileWorkDelegate @Inject constructor(
             prefsInteractor.setAutomaticExportUri("")
             prefsInteractor.setAutomaticExportError(false)
             automaticExportInteractor.cancel()
+            requestScreenUpdate()
+        }
+    }
+
+    private fun disableAutomaticIcsS3Upload() {
+        delegateScope.launch {
+            prefsInteractor.setIcsExportS3AutomaticEnabled(false)
+            prefsInteractor.setIcsExportS3AutomaticError(false)
+            automaticIcsS3ExportInteractor.cancel()
             requestScreenUpdate()
         }
     }
@@ -485,6 +526,37 @@ class SettingsFileWorkDelegate @Inject constructor(
         showMessage(resourceRepo.getString(R.string.settings_file_create_error))
     }
 
+    private suspend fun loadS3Config(): S3Config? {
+        val endpoint = prefsInteractor.getIcsExportS3Endpoint().trim()
+        val accessKey = prefsInteractor.getIcsExportS3AccessKey().trim()
+        val secretKey = prefsInteractor.getIcsExportS3SecretKey().trim()
+        val bucket = prefsInteractor.getIcsExportS3Bucket().trim()
+        val region = prefsInteractor.getIcsExportS3Region().trim()
+        val timeoutSeconds = prefsInteractor.getIcsExportS3TimeoutSeconds()
+        val addressing = prefsInteractor.getIcsExportS3Addressing()
+        val tlsVerify = prefsInteractor.getIcsExportS3TlsVerify()
+        val objectKeyTemplate = prefsInteractor.getIcsExportS3ObjectKeyTemplate().trim()
+
+        if (endpoint.isEmpty() || accessKey.isEmpty() || secretKey.isEmpty() ||
+            bucket.isEmpty() || region.isEmpty() || timeoutSeconds <= 0
+        ) {
+            showMessage(resourceRepo.getString(R.string.message_export_s3_settings_incomplete))
+            return null
+        }
+
+        return S3Config(
+            endpoint = endpoint,
+            accessKey = accessKey,
+            secretKey = secretKey,
+            bucket = bucket,
+            region = region,
+            timeoutSeconds = timeoutSeconds,
+            addressing = addressing,
+            tlsVerify = tlsVerify,
+            objectKeyTemplate = objectKeyTemplate,
+        )
+    }
+
     fun showMessage(
         string: String,
         shareUriString: String? = null,
@@ -533,6 +605,10 @@ class SettingsFileWorkDelegate @Inject constructor(
 
     private suspend fun loadAutomaticExportEnabled(): Boolean {
         return prefsInteractor.getAutomaticExportUri().isNotEmpty()
+    }
+
+    private suspend fun loadAutomaticIcsS3UploadEnabled(): Boolean {
+        return prefsInteractor.getIcsExportS3AutomaticEnabled()
     }
 
     private suspend fun requestScreenUpdate() {

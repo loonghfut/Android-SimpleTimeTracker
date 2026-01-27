@@ -141,6 +141,58 @@ class PrefsRepoImpl @Inject constructor(
         KEY_ICS_EXPORT_CUSTOM_FILENAME, "",
     )
 
+    override var icsExportS3Endpoint: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_ENDPOINT, "",
+    )
+
+    override var icsExportS3AccessKey: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_ACCESS_KEY, "",
+    )
+
+    override var icsExportS3SecretKey: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_SECRET_KEY, "",
+    )
+
+    override var icsExportS3Bucket: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_BUCKET, "",
+    )
+
+    override var icsExportS3Region: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_REGION, "",
+    )
+
+    override var icsExportS3TimeoutSeconds: Int by prefs.delegate(
+        KEY_ICS_EXPORT_S3_TIMEOUT_SECONDS, 30,
+    )
+
+    override var icsExportS3Addressing: Int by prefs.delegate(
+        KEY_ICS_EXPORT_S3_ADDRESSING, 0,
+    )
+
+    override var icsExportS3TlsVerify: Boolean by prefs.delegate(
+        KEY_ICS_EXPORT_S3_TLS_VERIFY, true,
+    )
+
+    override var icsExportS3ObjectKeyTemplate: String by prefs.delegate(
+        KEY_ICS_EXPORT_S3_OBJECT_KEY_TEMPLATE, "",
+    )
+
+    override var icsExportS3AutomaticEnabled: Boolean by prefs.delegate(
+        KEY_ICS_EXPORT_S3_AUTOMATIC_ENABLED, false,
+    )
+
+    override var icsExportS3AutomaticError: Boolean by prefs.delegate(
+        KEY_ICS_EXPORT_S3_AUTOMATIC_ERROR, false,
+    )
+
+    override var icsExportS3AutomaticLastSaveTime: Long by prefs.delegate(
+        KEY_ICS_EXPORT_S3_AUTOMATIC_LAST_SAVE_TIME, 0,
+    )
+
+    override var icsExportS3AutomaticTriggerTime: Long by prefs.delegate(
+        KEY_ICS_EXPORT_S3_AUTOMATIC_TRIGGER_TIME, 0,
+    )
+
     override var keepStatisticsRange: Boolean by prefs.delegate(
         KEY_KEEP_STATISTICS_RANGE, false,
     )
@@ -668,6 +720,19 @@ class PrefsRepoImpl @Inject constructor(
         const val KEY_CSV_EXPORT_DATE_TIME_FORMAT = "csvExportDateTimeFormat"
         const val KEY_CSV_EXPORT_CUSTOM_FILENAME = "csvExportCustomFilename"
         const val KEY_ICS_EXPORT_CUSTOM_FILENAME = "icsExportCustomFilename"
+        const val KEY_ICS_EXPORT_S3_ENDPOINT = "icsExportS3Endpoint"
+        const val KEY_ICS_EXPORT_S3_ACCESS_KEY = "icsExportS3AccessKey"
+        const val KEY_ICS_EXPORT_S3_SECRET_KEY = "icsExportS3SecretKey"
+        const val KEY_ICS_EXPORT_S3_BUCKET = "icsExportS3Bucket"
+        const val KEY_ICS_EXPORT_S3_REGION = "icsExportS3Region"
+        const val KEY_ICS_EXPORT_S3_TIMEOUT_SECONDS = "icsExportS3TimeoutSeconds"
+        const val KEY_ICS_EXPORT_S3_ADDRESSING = "icsExportS3Addressing"
+        const val KEY_ICS_EXPORT_S3_TLS_VERIFY = "icsExportS3TlsVerify"
+        const val KEY_ICS_EXPORT_S3_OBJECT_KEY_TEMPLATE = "icsExportS3ObjectKeyTemplate"
+        const val KEY_ICS_EXPORT_S3_AUTOMATIC_ENABLED = "icsExportS3AutomaticEnabled"
+        const val KEY_ICS_EXPORT_S3_AUTOMATIC_ERROR = "icsExportS3AutomaticError"
+        const val KEY_ICS_EXPORT_S3_AUTOMATIC_LAST_SAVE_TIME = "icsExportS3AutomaticLastSaveTime"
+        const val KEY_ICS_EXPORT_S3_AUTOMATIC_TRIGGER_TIME = "icsExportS3AutomaticTriggerTime"
         const val KEY_KEEP_STATISTICS_RANGE = "keepStatisticsRange"
         const val KEY_RETROACTIVE_TRACKING_MODE = "retroactiveTrackingMode"
         const val KEY_RETROACTIVE_MULTITASKING_HINT_WAS_HIDDEN = "retroactiveMultitaskingHintWasHidden"

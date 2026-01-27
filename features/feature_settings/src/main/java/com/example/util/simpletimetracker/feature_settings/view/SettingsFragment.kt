@@ -12,6 +12,7 @@ import com.example.util.simpletimetracker.core.dialog.DateTimeDialogListener
 import com.example.util.simpletimetracker.core.dialog.DurationDialogListener
 import com.example.util.simpletimetracker.core.dialog.OptionsListDialogListener
 import com.example.util.simpletimetracker.core.dialog.StandardDialogListener
+import com.example.util.simpletimetracker.core.dialog.TextInputDialogListener
 import com.example.util.simpletimetracker.core.dialog.TypesSelectionDialogListener
 import com.example.util.simpletimetracker.core.sharedViewModel.MainTabsViewModel
 import com.example.util.simpletimetracker.core.utils.InsetConfiguration
@@ -34,6 +35,7 @@ class SettingsFragment :
     DurationDialogListener,
     DateTimeDialogListener,
     DataExportSettingsDialogListener,
+    TextInputDialogListener,
     TypesSelectionDialogListener,
     OptionsListDialogListener,
     AdvancedOptionsBlockClickListener {
@@ -108,6 +110,10 @@ class SettingsFragment :
 
     override fun onDataExportSettingsSelected(data: DataExportSettingsResult) {
         viewModel.onDataExportSettingsSelected(data)
+    }
+
+    override fun onTextInputConfirmed(text: String, tag: String?) {
+        viewModel.onTextInputConfirmed(text, tag)
     }
 
     override fun onDataSelected(

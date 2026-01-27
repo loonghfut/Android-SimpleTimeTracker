@@ -43,6 +43,19 @@ interface PrefsRepo {
 
     var csvExportCustomFileName: String
     var icsExportCustomFileName: String
+    var icsExportS3Endpoint: String
+    var icsExportS3AccessKey: String
+    var icsExportS3SecretKey: String
+    var icsExportS3Bucket: String
+    var icsExportS3Region: String
+    var icsExportS3TimeoutSeconds: Int
+    var icsExportS3Addressing: Int
+    var icsExportS3TlsVerify: Boolean
+    var icsExportS3ObjectKeyTemplate: String
+    var icsExportS3AutomaticEnabled: Boolean
+    var icsExportS3AutomaticError: Boolean
+    var icsExportS3AutomaticLastSaveTime: Long
+    var icsExportS3AutomaticTriggerTime: Long
 
     var keepStatisticsRange: Boolean
 

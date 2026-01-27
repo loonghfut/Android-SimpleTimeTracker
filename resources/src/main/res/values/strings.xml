@@ -467,6 +467,40 @@ Example:<br/>
 \"Reading\",2023-05-30 14:45:21,2023-05-30 15:45:21,\"Comment, comment\"
     ]]></string>
     <string name="settings_export_ics">ICS export</string>
+    <string name="settings_export_ics_s3_endpoint">S3 endpoint</string>
+    <string name="settings_export_ics_s3_endpoint_description">Base S3 endpoint URL.</string>
+    <string name="settings_export_ics_s3_endpoint_hint">https://s3.example.com</string>
+    <string name="settings_export_ics_s3_access_key">Access key</string>
+    <string name="settings_export_ics_s3_access_key_description">Access key ID.</string>
+    <string name="settings_export_ics_s3_access_key_hint">AKIA…</string>
+    <string name="settings_export_ics_s3_secret_key">Secret key</string>
+    <string name="settings_export_ics_s3_secret_key_description">Secret access key.</string>
+    <string name="settings_export_ics_s3_secret_key_hint">Enter secret key</string>
+    <string name="settings_export_ics_s3_bucket">Bucket</string>
+    <string name="settings_export_ics_s3_bucket_description">Target bucket name.</string>
+    <string name="settings_export_ics_s3_bucket_hint">my-bucket</string>
+    <string name="settings_export_ics_s3_region">Region ID</string>
+    <string name="settings_export_ics_s3_region_description">AWS region, e.g. us-east-1.</string>
+    <string name="settings_export_ics_s3_region_hint">us-east-1</string>
+    <string name="settings_export_ics_s3_timeout">Timeout (s)</string>
+    <string name="settings_export_ics_s3_timeout_description">Network timeout in seconds.</string>
+    <string name="settings_export_ics_s3_timeout_hint">30</string>
+    <string name="settings_export_ics_s3_addressing">Addressing</string>
+    <string name="settings_export_ics_s3_addressing_description">Bucket addressing mode.</string>
+    <string name="settings_export_ics_s3_addressing_path">Path-style</string>
+    <string name="settings_export_ics_s3_addressing_virtual_host">Virtual-hosted</string>
+    <string name="settings_export_ics_s3_tls_verify">TLS verify</string>
+    <string name="settings_export_ics_s3_tls_verify_description">Verify TLS certificates.</string>
+    <string name="settings_export_ics_s3_object_key">ICS file name</string>
+    <string name="settings_export_ics_s3_object_key_description">Object key template for uploads. Use {date} tag.</string>
+    <string name="settings_export_ics_s3_object_key_hint">stt_events_{date}.ics</string>
+    <string name="settings_export_ics_s3_object_key_default">Default: stt_events_{date}.ics</string>
+    <string name="settings_export_ics_s3_upload">Upload ICS to S3</string>
+    <string name="settings_export_ics_s3_upload_description">Upload using configured S3 settings.</string>
+    <string name="settings_automatic_ics_s3_upload">Enable automatic S3 upload</string>
+    <string name="settings_automatic_ics_s3_upload_description">ICS file will be uploaded daily at the selected time.</string>
+    <string name="settings_export_ics_s3_value_empty">Not set</string>
+    <string name="settings_export_ics_s3_timeout_value">%s s</string>
     <string name="settings_export_warning">This file cannot be used as a backup.</string>
     <string name="settings_file_open_error">Error opening file</string>
     <string name="settings_file_create_error">Error creating file</string>
@@ -484,6 +518,8 @@ Example:<br/>
     <string name="message_action_share">Share</string>
     <string name="message_automatic_backup_error">There was an error with automatic backup.</string>
     <string name="message_automatic_export_error">There was an error with automatic export.</string>
+    <string name="message_automatic_ics_s3_export_error">There was an error with automatic S3 upload.</string>
+    <string name="message_export_s3_settings_incomplete">Please complete S3 settings first.</string>
     <string name="message_automatic_error_hint">Try to select different location</string>
 
     <!--  Backup options  -->

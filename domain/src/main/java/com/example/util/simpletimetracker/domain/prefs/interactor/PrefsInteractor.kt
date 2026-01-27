@@ -3,6 +3,7 @@ package com.example.util.simpletimetracker.domain.prefs.interactor
 import com.example.util.simpletimetracker.domain.base.CommentFilterType
 import com.example.util.simpletimetracker.domain.base.ContainerOptionsModel
 import com.example.util.simpletimetracker.domain.base.DurationFormat
+import com.example.util.simpletimetracker.domain.backup.model.S3Addressing
 import com.example.util.simpletimetracker.domain.fileExport.ExportDateTimeFormat
 import com.example.util.simpletimetracker.domain.darkMode.interactor.IsSystemInDarkModeInteractor
 import com.example.util.simpletimetracker.domain.darkMode.model.DarkMode
@@ -250,6 +251,117 @@ class PrefsInteractor @Inject constructor(
     suspend fun setIcsExportCustomFileName(value: String) = withContext(Dispatchers.IO) {
         prefsRepo.icsExportCustomFileName = value
     }
+
+    suspend fun getIcsExportS3Endpoint(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Endpoint
+    }
+
+    suspend fun setIcsExportS3Endpoint(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Endpoint = value
+    }
+
+    suspend fun getIcsExportS3AccessKey(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AccessKey
+    }
+
+    suspend fun setIcsExportS3AccessKey(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AccessKey = value
+    }
+
+    suspend fun getIcsExportS3SecretKey(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3SecretKey
+    }
+
+    suspend fun setIcsExportS3SecretKey(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3SecretKey = value
+    }
+
+    suspend fun getIcsExportS3Bucket(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Bucket
+    }
+
+    suspend fun setIcsExportS3Bucket(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Bucket = value
+    }
+
+    suspend fun getIcsExportS3Region(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Region
+    }
+
+    suspend fun setIcsExportS3Region(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Region = value
+    }
+
+    suspend fun getIcsExportS3TimeoutSeconds(): Int = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3TimeoutSeconds
+    }
+
+    suspend fun setIcsExportS3TimeoutSeconds(value: Int) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3TimeoutSeconds = value
+    }
+
+    suspend fun getIcsExportS3Addressing(): S3Addressing = withContext(Dispatchers.IO) {
+        when (prefsRepo.icsExportS3Addressing) {
+            1 -> S3Addressing.VirtualHost
+            else -> S3Addressing.Path
+        }
+    }
+
+    suspend fun setIcsExportS3Addressing(value: S3Addressing) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3Addressing = when (value) {
+            S3Addressing.Path -> 0
+            S3Addressing.VirtualHost -> 1
+        }
+    }
+
+    suspend fun getIcsExportS3TlsVerify(): Boolean = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3TlsVerify
+    }
+
+    suspend fun setIcsExportS3TlsVerify(value: Boolean) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3TlsVerify = value
+    }
+
+    suspend fun getIcsExportS3ObjectKeyTemplate(): String = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3ObjectKeyTemplate
+    }
+
+    suspend fun setIcsExportS3ObjectKeyTemplate(value: String) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3ObjectKeyTemplate = value
+    }
+
+    suspend fun getIcsExportS3AutomaticEnabled(): Boolean = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticEnabled
+    }
+
+    suspend fun setIcsExportS3AutomaticEnabled(value: Boolean) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticEnabled = value
+    }
+
+    suspend fun getIcsExportS3AutomaticError(): Boolean = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticError
+    }
+
+    suspend fun setIcsExportS3AutomaticError(value: Boolean) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticError = value
+    }
+
+    suspend fun getIcsExportS3AutomaticLastSaveTime(): Long = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticLastSaveTime
+    }
+
+    suspend fun setIcsExportS3AutomaticLastSaveTime(value: Long) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticLastSaveTime = value
+    }
+
+    suspend fun getIcsExportS3AutomaticTriggerTime(): Long = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticTriggerTime
+    }
+
+    suspend fun setIcsExportS3AutomaticTriggerTime(value: Long) = withContext(Dispatchers.IO) {
+        prefsRepo.icsExportS3AutomaticTriggerTime = value
+    }
+
 
     suspend fun getKeepStatisticsRange(): Boolean = withContext(Dispatchers.IO) {
         prefsRepo.keepStatisticsRange

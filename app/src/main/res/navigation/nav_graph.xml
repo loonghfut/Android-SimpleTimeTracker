@@ -255,6 +255,11 @@
         android:name="com.example.util.simpletimetracker.feature_dialogs.standard.StandardDialogFragment"
         android:label="StandardDialogFragment" />
     <dialog
+        android:id="@+id/textInputDialogFragment"
+        android:name="com.example.util.simpletimetracker.feature_dialogs.textInput.TextInputDialogFragment"
+        android:label="TextInputDialogFragment"
+        tools:layout="@layout/text_input_dialog_fragment" />
+    <dialog
         android:id="@+id/chartFilerDialogFragment"
         android:name="com.example.util.simpletimetracker.feature_dialogs.chartFilter.view.ChartFilterDialogFragment"
         android:label="ChartFilerDialogFragment"
